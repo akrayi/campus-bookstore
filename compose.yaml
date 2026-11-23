@@ -1,0 +1,67 @@
+services:
+  orders-db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: bookstore_orders
+      POSTGRES_USER: bookstore
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}"
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - orders-data:/var/lib/postgresql/data
+      - ./order-service/schema.sql:/docker-entrypoint-initdb.d/01-orders.sql:ro
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "bookstore", "-d", "bookstore_orders"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  product-service:
+    build: ./product-service
+    image: campus-bookstore/product-service:1.0
+    environment:
+      PRODUCT_DB_PATH: /home/bookstore/products.db
+    ports:
+      - "127.0.0.1:5201:5001"
+    volumes:
+      - product-data:/home/bookstore
+    command:
+      - sh
+      - -ec
+      - |
+        if [ ! -f /home/bookstore/products.db ]; then
+          cp /app/products.db /home/bookstore/products.db
+        fi
+        exec python -m flask --app app run --host=0.0.0.0 --port=5001
+    healthcheck:
+      test: ["CMD", "python", "-c", "from urllib.request import urlopen; urlopen('http://127.0.0.1:5001/health', timeout=2).close()"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  order-service:
+    build: ./order-service
+    image: campus-bookstore/order-service:1.0
+    environment:
+      PRODUCT_SERVICE_URL: http://product-service:5001
+      POSTGRES_HOST: orders-db
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: bookstore_orders
+      POSTGRES_USER: bookstore
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}"
+    ports:
+      - "127.0.0.1:5202:5002"
+    depends_on:
+      orders-db:
+        condition: service_healthy
+      product-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "from urllib.request import urlopen; urlopen('http://127.0.0.1:5002/health', timeout=2).close()"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  orders-data:
+  product-data:
