@@ -2,3 +2,4 @@
 __pycache__/
 .venv/
 /product-service/products.db
+node_modules/

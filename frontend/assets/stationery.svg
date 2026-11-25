@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="360" viewBox="0 0 480 360">
+ <defs><filter id="shadow"><feDropShadow dx="5" dy="9" stdDeviation="6" flood-color="#263a37" flood-opacity=".15"/></filter></defs>
+ <ellipse cx="238" cy="310" rx="100" ry="12" fill="#263a37" opacity=".08"/>
+ <g transform="translate(150 52) rotate(-13 90 130)" filter="url(#shadow)">
+  <rect width="170" height="250" rx="6" fill="#e0cc9f"/>
+  <path d="M0 175h170v69q0 6-6 6H6q-6 0-6-6z" fill="#f2e7cc"/>
+  <g fill="#365d4c"><rect x="26" y="24" width="14" height="174" rx="4"/><rect x="78" y="24" width="14" height="174" rx="4"/><rect x="130" y="24" width="14" height="174" rx="4"/></g>
+  <g fill="#e6b16f"><path d="M26 198l7 24 7-24z"/><path d="M78 198l7 24 7-24z"/><path d="M130 198l7 24 7-24z"/></g>
+  <g fill="#243d31"><path d="M30 214l3 8 3-8z"/><path d="M82 214l3 8 3-8z"/><path d="M134 214l3 8 3-8z"/></g>
+  <path d="M30 30v163M82 30v163M134 30v163" stroke="#94ae88" stroke-width="3"/>
+ </g>
+</svg>

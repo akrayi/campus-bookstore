@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="360" viewBox="0 0 480 360">
+ <defs><filter id="shadow"><feDropShadow dx="7" dy="10" stdDeviation="8" flood-color="#263a37" flood-opacity=".15"/></filter></defs>
+ <ellipse cx="240" cy="309" rx="112" ry="12" fill="#263a37" opacity=".08"/>
+ <g transform="translate(144 42) rotate(7 90 135)" filter="url(#shadow)">
+  <rect x="5" y="7" width="183" height="256" rx="5" fill="#fffbea" stroke="#d6c7a6"/>
+  <rect width="184" height="254" rx="5" fill="#be7756"/>
+  <path d="M16 0v254" stroke="#945539" stroke-width="3"/>
+  <rect x="38" y="42" width="112" height="68" rx="3" fill="#fcf5dd"/>
+  <text x="94" y="71" text-anchor="middle" fill="#533e30" font-family="Georgia,serif" font-size="20">Field notes</text>
+  <path d="M55 86h79M55 93h79" stroke="#b3aa93"/>
+  <path d="M155 0v254" stroke="#4b6551" stroke-width="7"/>
+  <path d="M0 231q90 5 184 0" stroke="#aa6142" fill="none"/>
+ </g>
+ <g transform="translate(356 98) rotate(15)"><path d="M0 0h12v171H0z" fill="#e3bd62"/><path d="M0 0h4v171H0z" fill="#c59b41"/><path d="M0 171l6 23 6-23z" fill="#d9bd91"/><path d="M4 187l2 7 2-7" fill="#3f4540"/><path d="M0 0h12v16H0z" fill="#d9a99c"/></g>
+</svg>

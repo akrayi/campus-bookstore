@@ -1,0 +1,25 @@
+# Always use with: docker compose -p campus-bookstore-tests -f compose.yaml -f compose.test.yaml ...
+# Separate project-scoped volumes protect the demo databases.
+name: campus-bookstore-tests
+services:
+  storefront:
+    ports: !override
+      - "127.0.0.1:3100:80"
+  product-service:
+    ports: !override
+      - "127.0.0.1:5301:5001"
+    volumes: !override
+      - test-product-data:/home/bookstore
+  order-service:
+    ports: !override
+      - "127.0.0.1:5302:5002"
+  orders-db:
+    ports: !override
+      - "127.0.0.1:55432:5432"
+    volumes: !override
+      - test-orders-data:/var/lib/postgresql/data
+      - ./order-service/schema.sql:/docker-entrypoint-initdb.d/01-orders.sql:ro
+
+volumes:
+  test-product-data:
+  test-orders-data:

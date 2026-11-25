@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="360" viewBox="0 0 480 360">
+ <defs><filter id="shadow"><feDropShadow dx="7" dy="10" stdDeviation="8" flood-color="#263a37" flood-opacity=".15"/></filter></defs>
+ <ellipse cx="245" cy="307" rx="108" ry="13" fill="#263a37" opacity=".08"/>
+ <g transform="translate(145 39) rotate(-8 90 140)" filter="url(#shadow)">
+  <rect x="5" y="8" width="180" height="258" rx="5" fill="#c4bea7"/>
+  <rect x="10" y="4" width="180" height="255" rx="5" fill="#fffbea"/>
+  <path d="M16 245h166M16 249h166M16 253h166" stroke="#dedbc8"/>
+  <rect width="184" height="248" rx="4" fill="#375b4c"/>
+  <path d="M13 0v248" stroke="#203d32" stroke-width="5"/>
+  <rect x="32" y="30" width="124" height="184" rx="62" fill="none" stroke="#c8d5ad"/>
+  <path d="M50 130c20-40 65-40 88 0M50 147c20-30 65-30 88 0M62 158c15-20 43-20 64 0" stroke="#c8d5ad" fill="none" stroke-width="2"/>
+  <circle cx="94" cy="80" r="13" fill="#e1c07e"/>
+  <text x="94" y="191" text-anchor="middle" fill="#e5ebd4" font-family="Georgia,serif" font-size="18">Campus reads</text>
+ </g>
+</svg>

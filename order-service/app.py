@@ -1,5 +1,6 @@
 import json
 import os
+import re
 from decimal import Decimal
 from urllib.error import HTTPError, URLError
 from urllib.request import urlopen
@@ -12,6 +13,15 @@ app = Flask(__name__)
 PRODUCT_SERVICE_URL = os.getenv(
     "PRODUCT_SERVICE_URL", "http://127.0.0.1:5001"
 ).rstrip("/")
+
+
+class InvalidProductResponse(Exception):
+    pass
+
+
+@app.errorhandler(InvalidProductResponse)
+def handle_invalid_product_response(error):
+    return {"error": "Product Service returned invalid product data."}, 502
 
 
 def connect_db():
@@ -28,11 +38,29 @@ def connect_db():
 def fetch_product(product_id):
     url = f"{PRODUCT_SERVICE_URL}/products/{product_id}"
     with urlopen(url, timeout=3) as response:
-        return json.load(response)
+        try:
+            product = json.load(response)
+        except (ValueError, UnicodeError) as error:
+            raise InvalidProductResponse() from error
+
+    if (
+        not isinstance(product, dict)
+        or type(product.get("id")) is not int
+        or product["id"] != product_id
+        or not isinstance(product.get("name"), str)
+        or not product["name"].strip()
+        or product.get("currency") != "CAD"
+        or not isinstance(product.get("price_cad"), str)
+        or not re.fullmatch(r"[0-9]{1,17}(?:\.[0-9]{1,2})?", product["price_cad"])
+        or Decimal(product["price_cad"]) * 100 > 2**63 - 1
+    ):
+        raise InvalidProductResponse()
+    return product
 
 
 @app.errorhandler(HTTPError)
 def handle_product_error(error):
+    error.close()
     if error.code == 404:
         return {"error": "Product not found."}, 404
     return {"error": "Product Service returned an error."}, 502

@@ -3,8 +3,10 @@ import os
 import unittest
 from urllib.request import Request, urlopen
 
-PRODUCT_URL = os.getenv("PRODUCT_URL", "http://127.0.0.1:5201")
-ORDER_URL = os.getenv("ORDER_URL", "http://127.0.0.1:5202")
+from test_support import test_url
+
+PRODUCT_URL = test_url("PRODUCT_URL", 5301)
+ORDER_URL = test_url("ORDER_URL", 5302)
 
 
 def post_json(url, payload):

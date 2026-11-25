@@ -11,6 +11,11 @@ DATABASE_PATH = Path(os.getenv("PRODUCT_DB_PATH", Path(__file__).with_name("prod
 MAX_CENTS = 2**63 - 1
 
 
+@app.errorhandler(sqlite3.OperationalError)
+def handle_database_error(error):
+    return {"error": "Product database is unavailable. Please try again."}, 503
+
+
 def product_response(product_id, name, cents):
     return {
         "id": product_id,
@@ -91,3 +96,12 @@ def get_product(product_id):
         return {"error": "Product not found."}, 404
 
     return product_response(product["id"], product["name"], product["price_cents"]), 200
+
+
+@app.get("/products")
+def list_products():
+    with closing(sqlite3.connect(DATABASE_PATH)) as db:
+        rows = db.execute(
+            "SELECT id, name, price_cents FROM products ORDER BY id DESC"
+        ).fetchall()
+    return {"products": [product_response(*row) for row in rows]}

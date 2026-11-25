@@ -1,3 +1,4 @@
+---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -7,7 +8,8 @@ spec:
   podSelector:
     matchLabels:
       app: orders-db
-  policyTypes: [Ingress]
+  policyTypes:
+    - Ingress
   ingress:
     - from:
         - podSelector:
