@@ -1,0 +1,50 @@
+# Docker Desktop Kubernetes only. Chart: kube-prometheus-stack 93.9.0.
+alertmanager:
+  enabled: false
+
+prometheus:
+  prometheusSpec:
+    retention: 1d
+
+prometheus-node-exporter:
+  hostRootFsMount:
+    enabled: true
+    # Docker Desktop's root mount is not shared/slave.
+    # New host submounts will not propagate into the exporter.
+    mountPropagation: None
+
+# These metrics endpoints are not exposed by this Docker Desktop cluster.
+kubeControllerManager:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeEtcd:
+  enabled: false
+kubeProxy:
+  enabled: false
+
+defaultRules:
+  rules:
+    alertmanager: false
+    etcd: false
+    kubeControllerManager: false
+    kubeSchedulerAlerting: false
+    kubeSchedulerRecording: false
+    kubeProxy: false
+
+grafana:
+  sidecar:
+    datasources:
+      alertmanager:
+        enabled: false
+  deleteDatasources:
+    - name: Alertmanager
+      orgId: 1
+  additionalDataSources:
+    - name: Loki
+      uid: bookstore-loki
+      type: loki
+      access: proxy
+      url: http://bookstore-loki.monitoring.svc.cluster.local:3100
+      isDefault: false
+      editable: false

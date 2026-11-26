@@ -1,5 +1,27 @@
 # Campus Bookstore
 
+For the final assessed demo, run the **complete Kubernetes application** using
+[the CMD startup and shutdown guide](docs/DEMO-CMD.md). The monitored website is
+on **http://localhost:3002**; the independent Compose demo stays on port 3000.
+See [architecture and request-flow diagrams](docs/ARCHITECTURE.md),
+[CI/CD setup](docs/CICD.md).
+
+```cmd
+python scripts/init_env.py
+python scripts/setup_cluster.py
+python scripts/deploy.py
+python scripts/setup_monitoring.py
+python scripts/verify_cluster.py
+scripts\start_demo.cmd
+```
+
+Run these from the repository root after Docker Desktop Kubernetes is ready.
+The setup preserves existing database credentials and volumes. The deployment
+builds and validates all application components before waiting for readiness.
+The API gateway runs without root and limits API traffic. Both APIs use Gunicorn,
+database readiness checks and Prometheus HTTP metrics. Compose services now use
+`restart: unless-stopped` and can restart with Docker Desktop unless manually stopped.
+
 A green-and-cream storefront for the existing Flask Product and Order APIs. DM Sans controls and Instrument Serif headings are self-hosted with their OFL licenses. Local SVG illustrations cover books, notebooks, pens, and pencils.
 
 ## Run the demo
@@ -76,8 +98,15 @@ Keep volumes when stopping the demo (`docker compose stop`) to preserve products
 
 ## Review checks and Kubernetes prerequisites
 
+For Docker Desktop Kubernetes monitoring setup, the node-exporter repair, and
+commands to open Grafana, Prometheus, and Loki, see [monitoring/README.md](monitoring/README.md).
+
 CI runs service unit tests, real PostgreSQL integration tests, browser regressions, and offline manifest checks with locked Node test dependencies. The nginx proxy refreshes Docker service DNS after container recreation. Product database failures return JSON 503 responses; malformed Product Service responses are rejected by Order Service with JSON 502 responses before an order is written.
 
 The Kubernetes folder includes the PostgreSQL schema ConfigMap and validates its SQL against the Compose schema. Offline checks validate YAML and local resource references; they are not a cluster deployment or full API-server schema validation. The `orders-db-secret` secret (key `POSTGRES_PASSWORD`) and the `monitoring` namespace remain external prerequisites. No credentials are checked in. Existing database volumes retain their data; initialization SQL runs only for a new database.
 
-The local `deploy_local.py` watcher targets the two API deployments in Docker Desktop Kubernetes. The website in this README is served through Docker Compose; the watcher does not deploy the storefront. Do not treat the unauthenticated local demo as a production deployment.
+The `deploy_local.py` watcher deploys the complete application from an exact
+successful master push CI commit. The optional GitHub Actions `deploy-local` job
+uses a registered Windows runner; see docs/CICD.md for the required repository
+variable and runner label. Local files alone do not register a runner or publish
+changes. Do not treat the unauthenticated local demo as a production deployment.

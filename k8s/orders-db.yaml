@@ -30,9 +30,21 @@ spec:
       labels:
         app: orders-db
     spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: postgres
           image: postgres:17
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
           ports:
             - name: postgres
               containerPort: 5432
@@ -59,7 +71,7 @@ spec:
                 - -d
                 - bookstore_orders
             periodSeconds: 5
-            timeoutSeconds: 3
+            timeoutSeconds: 5
           volumeMounts:
             - name: data
               mountPath: /var/lib/postgresql/data

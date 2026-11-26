@@ -1,20 +1,23 @@
 services:
   storefront:
+    restart: unless-stopped
     build: ./frontend
     ports:
-      - "127.0.0.1:3000:80"
+      - "127.0.0.1:3000:8080"
     depends_on:
       product-service:
         condition: service_healthy
       order-service:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/"]
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:8080/"]
       interval: 5s
       timeout: 3s
       retries: 10
 
   orders-db:
+    restart: unless-stopped
+    user: "999:999"
     image: postgres:17
     environment:
       POSTGRES_DB: bookstore_orders
@@ -32,7 +35,10 @@ services:
       retries: 10
 
   product-service:
-    build: ./product-service
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: product-service/Dockerfile
     image: campus-bookstore/product-service:1.0
     environment:
       PRODUCT_DB_PATH: /home/bookstore/products.db
@@ -47,7 +53,7 @@ services:
         if [ ! -f /home/bookstore/products.db ]; then
           cp /app/products.db /home/bookstore/products.db
         fi
-        exec python -m flask --app app run --host=0.0.0.0 --port=5001
+        exec gunicorn --workers=1 --threads=4 --bind=0.0.0.0:5001 --access-logfile=- app:app
     healthcheck:
       test: ["CMD", "python", "-c", "from urllib.request import urlopen; urlopen('http://127.0.0.1:5001/health', timeout=2).close()"]
       interval: 5s
@@ -55,7 +61,10 @@ services:
       retries: 10
 
   order-service:
-    build: ./order-service
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: order-service/Dockerfile
     image: campus-bookstore/order-service:1.0
     environment:
       PRODUCT_SERVICE_URL: http://product-service:5001

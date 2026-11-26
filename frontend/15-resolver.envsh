@@ -1,0 +1,5 @@
+#!/bin/sh
+if [ -z "${NGINX_RESOLVER:-}" ]; then
+    export NGINX_RESOLVER="$(awk '/^nameserver/ {print $2; exit}' /etc/resolv.conf)"
+fi
+export SERVICE_DOMAIN="${SERVICE_DOMAIN:-}"

@@ -5,8 +5,10 @@ from contextlib import closing
 from pathlib import Path
 
 from flask import Flask, request
+from shared.observability import instrument
 
 app = Flask(__name__)
+instrument(app, 'product-service')
 DATABASE_PATH = Path(os.getenv("PRODUCT_DB_PATH", Path(__file__).with_name("products.db")))
 MAX_CENTS = 2**63 - 1
 
@@ -51,6 +53,13 @@ def read_price_cents(data):
 @app.get("/health")
 def health():
     return {"service": "product-service", "status": "ok"}
+
+
+@app.get('/ready')
+def ready():
+    with closing(sqlite3.connect(DATABASE_PATH)) as db:
+        db.execute('SELECT id FROM products LIMIT 1').fetchall()
+    return {"status": "ready"}
 
 
 @app.post("/products")

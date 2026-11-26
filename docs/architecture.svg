@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="570" viewBox="0 0 1200 570">
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="none" stroke="#326554"/></marker></defs>
+<rect width="1200" height="570" fill="#f5f8f3"/>
+<g fill="#fff" stroke="#326554" stroke-width="2">
+<rect x="30" y="170" width="170" height="95" rx="12"/>
+<rect x="260" y="170" width="200" height="95" rx="12"/>
+<rect x="550" y="70" width="240" height="95" rx="12"/>
+<rect x="550" y="280" width="240" height="95" rx="12"/>
+<rect x="900" y="70" width="260" height="95" rx="12"/>
+<rect x="900" y="280" width="260" height="95" rx="12"/>
+<rect x="260" y="455" width="900" height="80" rx="12"/>
+</g>
+<g fill="#173f35" font-family="Arial,sans-serif" font-size="24" text-anchor="middle">
+<text x="115" y="213">Browser</text><text x="115" y="245" font-size="18">localhost:3002</text>
+<text x="360" y="213">nginx gateway</text><text x="360" y="245" font-size="18">Website + API proxy</text>
+<text x="670" y="110">Product Service</text><text x="670" y="142" font-size="18">REST :5001</text>
+<text x="670" y="320">Order Service</text><text x="670" y="352" font-size="18">REST :5002</text>
+<text x="1030" y="110">SQLite catalog</text><text x="1030" y="142" font-size="18">Product-owned PVC</text>
+<text x="1030" y="320">PostgreSQL orders</text><text x="1030" y="352" font-size="18">Order-owned PVC</text>
+<text x="710" y="490">Prometheus + Grafana | Alloy + Loki</text><text x="710" y="520" font-size="18">API metrics, Kubernetes resources and centralized pod logs</text>
+</g>
+<g fill="none" stroke="#326554" stroke-width="3" marker-end="url(#arrow)">
+<path d="M200 217H260"/><path d="M460 195H500V117H550"/><path d="M460 240H500V327H550"/>
+<path d="M790 117H900"/><path d="M790 327H900"/><path d="M670 280V165"/>
+<path d="M790 150H840V455" stroke-dasharray="7 5"/><path d="M790 350H820V455" stroke-dasharray="7 5"/>
+</g>
+<g fill="#326554" font-family="Arial,sans-serif" font-size="18"><text x="685" y="230">HTTP lookup</text><text x="42" y="55" font-size="28">One Kubernetes application with independent service data</text></g>
+</svg>

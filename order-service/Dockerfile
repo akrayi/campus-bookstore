@@ -5,15 +5,16 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-COPY requirements.txt .
+COPY order-service/requirements.txt .
 RUN python -m pip install --no-cache-dir -r requirements.txt
 
 RUN useradd --create-home --uid 10001 bookstore
 
-COPY app.py .
+COPY order-service/app.py .
+COPY shared ./shared
 
 USER bookstore
 
 EXPOSE 5002
 
-CMD ["python", "-m", "flask", "--app", "app", "run", "--host=0.0.0.0", "--port=5002"]
+CMD ["gunicorn", "--workers=1", "--threads=4", "--bind=0.0.0.0:5002", "--access-logfile=-", "app:app"]

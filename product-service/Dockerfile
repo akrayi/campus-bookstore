@@ -5,13 +5,14 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-COPY requirements.txt .
+COPY product-service/requirements.txt .
 RUN python -m pip install --no-cache-dir -r requirements.txt
 
 RUN useradd --create-home --uid 10001 bookstore \
     && chown bookstore:bookstore /app
 
-COPY app.py schema.sql ./
+COPY product-service/app.py product-service/schema.sql ./
+COPY shared ./shared
 
 USER bookstore
 
@@ -19,4 +20,4 @@ RUN python -c "import sqlite3; from pathlib import Path; db = sqlite3.connect('p
 
 EXPOSE 5001
 
-CMD ["python", "-m", "flask", "--app", "app", "run", "--host=0.0.0.0", "--port=5001"]
+CMD ["gunicorn", "--workers=1", "--threads=4", "--bind=0.0.0.0:5001", "--access-logfile=-", "app:app"]

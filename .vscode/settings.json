@@ -1,0 +1,9 @@
+{
+    "python.terminal.useEnvFile": true,
+    "yaml.schemas": {
+        "kubernetes": [
+            "/k8s/**/*.yaml",
+            "/monitoring/loki.yaml"
+        ]
+    }
+}

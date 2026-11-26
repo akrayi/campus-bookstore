@@ -51,25 +51,11 @@ def check_and_deploy(last_deployed):
 
         print(f"Deploying CI run {latest_run['run_number']}, commit {sha}", flush=True)
 
-        # Build both images before updating either service.
-        for service in SERVICES:
-            image = f"campus-bookstore/{service}:{sha}"
-            run("docker", "--context", "desktop-linux", "build",
-                "-t", image, source / service)
+        # Deploy the exact tested source, all APIs, website and manifests together.
+        import sys
+        run(sys.executable, source / 'scripts' / 'deploy.py', '--tag', sha)
 
-        for service in SERVICES:
-            image = f"campus-bookstore/{service}:{sha}"
-            updates = [f"{service}={image}"]
-
-            # The catalog init container uses the same image as the Product Service.
-            if service == "product-service":
-                updates.append(f"prepare-catalog={image}")
-
-            run(*KUBECTL, "set", "image", f"deployment/{service}", *updates)
-            run(*KUBECTL, "rollout", "status", f"deployment/{service}",
-                "--timeout=180s")
-
-    print(f"Both services rolled out successfully at {sha[:7]}.", flush=True)
+    print(f"Application rolled out successfully at {sha[:7]}.", flush=True)
     return sha
 
 

@@ -75,3 +75,28 @@ jobs:
         run: docker compose -p campus-bookstore-tests -f compose.yaml -f compose.test.yaml down --volumes
         env:
           POSTGRES_PASSWORD: unused-for-cleanup
+
+  deploy-local:
+    # Never execute fork pull requests on a laptop runner. Opt in after registration.
+    if: >-
+      github.event_name != 'pull_request' && github.ref == 'refs/heads/master' &&
+      vars.ENABLE_LOCAL_DEPLOY == 'true'
+    needs: build-and-test
+    runs-on: [self-hosted, Windows, X64, campus-bookstore]
+    timeout-minutes: 20
+    concurrency:
+      group: bookstore-local-deployment
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Deploy tested commit to Docker Desktop Kubernetes
+        shell: cmd
+        env:
+          POSTGRES_PASSWORD: ${{ secrets.BOOKSTORE_POSTGRES_PASSWORD }}
+        run: python scripts/deploy.py --tag ${{ github.sha }}
+      - name: Verify networking, RBAC, availability and HPA
+        shell: cmd
+        run: python scripts/verify_cluster.py

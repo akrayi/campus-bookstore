@@ -7,8 +7,10 @@ from urllib.request import urlopen
 
 import psycopg
 from flask import Flask, request
+from shared.observability import instrument
 
 app = Flask(__name__)
+instrument(app, 'order-service')
 
 PRODUCT_SERVICE_URL = os.getenv(
     "PRODUCT_SERVICE_URL", "http://127.0.0.1:5001"
@@ -99,6 +101,13 @@ def valid_quantity(quantity):
 @app.get("/health")
 def health():
     return {"service": "order-service", "status": "ok"}
+
+
+@app.get('/ready')
+def ready():
+    with connect_db() as conn:
+        conn.execute('SELECT id FROM orders LIMIT 1').fetchall()
+    return {"status": "ready"}
 
 
 @app.get("/quotes/<int:product_id>")

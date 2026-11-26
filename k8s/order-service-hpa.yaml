@@ -10,6 +10,9 @@ spec:
     name: order-service
   minReplicas: 1
   maxReplicas: 3
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 30
   metrics:
     - type: Resource
       resource:
